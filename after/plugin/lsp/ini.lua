@@ -45,19 +45,6 @@ require("mason").setup({
 	},
 })
 
-require("mason-lspconfig").setup({
-	ensure_installed = {
-		"lua_ls",
-	},
-	handlers = {
-		lsp.default_setup,
-		lua_ls = function()
-			local lua_opts = lsp.nvim_lua_ls()
-			require("lspconfig").lua_ls.setup(lua_opts)
-		end,
-	},
-})
-
 lsp.setup()
 
 vim.diagnostic.config({
@@ -65,3 +52,8 @@ vim.diagnostic.config({
 	signs = true,
 	update_in_insert = true,
 })
+
+local clients = vim.lsp.get_clients()
+for _, client in ipairs(clients) do
+  print(client.name)
+end

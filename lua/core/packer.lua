@@ -60,6 +60,7 @@ return packer.startup(function(use)
     use "mbbill/undotree" --[editor]
     use { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" } -- syntax highlight
     use "folke/todo-comments.nvim" --[editor]
+	use"onsails/lspkind.nvim"
     use {
         "VonHeikemen/lsp-zero.nvim",
         branch = "v3.x",

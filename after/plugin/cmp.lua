@@ -1,91 +1,101 @@
 local cmp = require("cmp")
 local luasnip = require("luasnip")
 
+-- Configuração do lsp_signature
 require("lsp_signature").setup()
+
+-- Carrega os snippets do VSCode para o luasnip
 require("luasnip/loaders/from_vscode").load()
 
+-- Definindo source_mapping
+local source_mapping = {
+    nvim_lsp = "[LSP]",
+    vsnip = "[VSnip]",
+    nvim_lsp_signature_help = "[SigHelp]",
+    nvim_lua = "[Lua]",
+    html_css = "[HTML/CSS]",
+    path = "[Path]",
+    luasnip = "[LuaSnip]",
+    cmp_tabnine = "[Tabnine]",
+    buffer = "[Buffer]",
+}
+
+-- Configuração do cmp
 cmp.setup({
-	snippet = {
-		-- REQUIRED - you must specify a snippet engine
-		expand = function(args)
-			--vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-			require("luasnip").lsp_expand(args.body)
-			-- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-			-- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-			-- vim.fn['UltiSnips#Anon'](args.body) -- For `ultisnips` users.
-		end,
-	},
-	formatting = {
-		-- format = function(entry, vim_item)
-		--     local lspkind_ok, lspkind = pcall(require, "lspkind")
-		--     if not lspkind_ok then
-		--         -- From kind_icons array
-		--         vim_item.kind = string.format("%s %s", kind_icons[vim_item.kind], vim_item.kind) -- This concatonates the icons with the name of the item kind
-		--         -- Source
-		--         vim_item.menu = source_mapping[entry.source.name]
-		--         return vim_item
-		--     else
-		--         -- From lspkind
-		--         vim_item.menu = source_mapping[entry.source.name]
-		--         return lspkind.cmp_format({ mode = "symbol_text", maxwidth = 50 })(entry, vim_item)
-		--     end
-		-- end,
-	},
-	window = {
-		-- completion = cmp.config.window.bordered(),
-		-- documentation = cmp.config.window.bordered(),
-	},
-	mapping = cmp.mapping.preset.insert({
-		["<C-b>"] = cmp.mapping.scroll_docs(-4),
-		["<C-f>"] = cmp.mapping.scroll_docs(4),
-		["<C-Space>"] = cmp.mapping.complete(),
-		["<C-e>"] = cmp.mapping.abort(),
-		["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-	}),
-	sources = cmp.config.sources({
-		{ name = "nvim_lsp" },
-		{ name = "vsnip" }, -- For vsnip users.
-		{ name = "nvim_lsp_signature_help" },
-		{ name = "nvim_lua" },
-		{ name = "html-css" },
-		{ name = "path" },
-		{ name = "luasnip" },
-		{ name = "cmp_tabnine" },
-		-- { name = 'luasnip' }, -- For luasnip users.
-		-- { name = 'ultisnips' }, -- For ultisnips users.
-		-- { name = 'snippy' }, -- For snippy users.
-	}, {
-		{ name = "buffer" },
-	}),
+  snippet = {
+    expand = function(args)
+      -- Use o luasnip para expandir os snippets
+      luasnip.lsp_expand(args.body)
+    end,
+  },
+  formatting = {
+    format = function(entry, vim_item)
+      -- Tentativa de carregar o lspkind
+      local lspkind_ok, lspkind = pcall(require, "lspkind")
+      if not lspkind_ok then
+        -- Se lspkind não estiver presente, usa os ícones definidos em kind_icons
+        vim_item.kind = string.format("%s %s", kind_icons[vim_item.kind], vim_item.kind)
+        -- Adiciona o menu da fonte
+        vim_item.menu = source_mapping[entry.source.name]
+        return vim_item
+      else
+        -- Se lspkind estiver presente, utiliza o formato do lspkind
+        vim_item.menu = source_mapping[entry.source.name]
+        return lspkind.cmp_format({ mode = "symbol_text", maxwidth = 50 })(entry, vim_item)
+      end
+    end,
+  },
+  window = {
+    completion = cmp.config.window.bordered(),
+    documentation = cmp.config.window.bordered(),
+  },
+  mapping = cmp.mapping.preset.insert({
+    ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+    ["<C-f>"] = cmp.mapping.scroll_docs(4),
+    ["<C-Space>"] = cmp.mapping.complete(),
+    ["<C-e>"] = cmp.mapping.abort(),
+    ["<CR>"] = cmp.mapping.confirm({ select = true }), -- Confirmar o item selecionado
+  }),
+  sources = cmp.config.sources({
+    { name = "nvim_lsp" },
+    { name = "vsnip" }, -- Para usuários do vsnip
+    { name = "nvim_lsp_signature_help" },
+    { name = "nvim_lua" },
+    { name = "html-css" },
+    { name = "path" },
+    { name = "luasnip" },
+    { name = "cmp_tabnine" },
+  }, {
+    { name = "buffer" },
+  }),
 })
 
--- Set configuration for specific filetype.
+-- Configuração específica para o tipo de arquivo 'gitcommit'
 cmp.setup.filetype("gitcommit", {
-	sources = cmp.config.sources({
-		{ name = "git" }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
-	}, {
-		{ name = "buffer" },
-	}),
+  sources = cmp.config.sources({
+    { name = "git" }, -- Certifique-se de que o cmp-git esteja instalado se for usar essa fonte
+  }, {
+    { name = "buffer" },
+  }),
 })
 
--- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+-- Configuração para o comando de busca no cmdline
 cmp.setup.cmdline({ "/", "?" }, {
-	mapping = cmp.mapping.preset.cmdline(),
-	sources = {
-		{ name = "buffer" },
-	},
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = "buffer" },
+  },
 })
 
--- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+-- Configuração para o cmdline de comandos
 cmp.setup.cmdline(":", {
-	mapping = cmp.mapping.preset.cmdline(),
-	sources = cmp.config.sources({
-		{ name = "path" },
-	}, {
-		{ name = "cmdline" },
-	}),
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = "path" },
+  }, {
+    { name = "cmdline" },
+  }),
 })
 
--- Set up lspconfig.
+-- Capabilities para o nvim-lsp
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
--- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
