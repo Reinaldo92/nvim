@@ -1,110 +1,98 @@
+-- Definir líder
+vim.g.mapleader = " "
+
+-- Alias para simplificar mapeamentos
 local remap = vim.keymap.set
 
-vim.g.mapleader = " " --- Map leader
+-- Abrir explorador de arquivos
+remap("n", "<leader>pv", vim.cmd.Ex)
 
-remap("n", "<leader>pv", vim.cmd.Ex) -- open file explorer
+-- Mover texto
+remap("n", "<A-k>", ":move .-2<CR>==")
+remap("n", "<A-j>", ":move .+1<CR>==")
+remap({ "v", "x" }, "<A-j>", ":move '>+1<CR>gv=gv")
+remap({ "v", "x" }, "<A-k>", ":move '<-2<CR>gv=gv")
 
-remap("n", "<A-k>", ":move .-2<CR>==") -- Move text down
-remap("n", "<A-j>", ":move .+1<CR>==") -- Move text up
-remap({ "v", "x" }, "<A-j>", ":move '>+1<CR>gv=gv") -- move line up
-remap({ "v", "x" }, "<A-k>", ":move '<-2<CR>gv=gv") -- move line down
+-- Indentação
+remap("v", "<", "<gv")
+remap("v", ">", ">gv")
 
-remap("v", "<", "<gv") -- Stay in indent mode
-remap("v", ">", ">gv") -- Stay in indent mode
+-- Substituir palavra selecionada sem afetar o registro
+remap("v", "p", '"_dP')
 
-remap("v", "p", '"_dP') -- Replace a word with yanked text
+-- Navegação entre buffers
+remap("n", "<S-l>", ":bnext<CR>")
+remap("n", "<S-h>", ":bprevious<CR>")
 
-remap("n", "<S-l>", ":bnext<CR>") -- Navigate next buffers
-remap("n", "<S-h>", ":bprevious<CR>") -- Navigate previous buffers
+-- Navegação entre janelas
+remap("n", "<C-h>", "<C-w>h")
+remap("n", "<C-j>", "<C-w>j")
+remap("n", "<C-k>", "<C-w>k")
+remap("n", "<C-l>", "<C-w>l")
 
-remap("n", "<C-h>", "<C-w>h") -- window navigation
-remap("n", "<C-j>", "<C-w>j") -- window navigation
-remap("n", "<C-k>", "<C-w>k") -- window navigation
-remap("n", "<C-l>", "<C-w>l") -- window navigation
+-- Redimensionar janelas
+remap("n", "<C-Up>", ":resize -2<CR>")
+remap("n", "<C-Down>", ":resize +2<CR>")
+remap("n", "<C-Left>", ":vertical resize -2<CR>")
+remap("n", "<C-Right>", ":vertical resize +2<CR>")
 
-remap({ "n", "v", "o" }, "<leader>y", '"+Y')
-remap({ "n", "v", "o" }, "<leader>p", '"+P')
+-- Copiar e colar para o clipboard do sistema
+remap({ "n", "v", "o" }, "<leader>y", '"+y')
+remap({ "n", "v", "o" }, "<leader>p", '"+p')
 
--- go to  beginning and end
+-- Movimentação no modo insert
 remap("i", "<C-b>", "<ESC>^i")
 remap("i", "<C-e>", "<End>")
+remap("i", "<C-h>", "<Left>")
+remap("i", "<C-j>", "<Down>")
+remap("i", "<C-k>", "<Up>")
+remap("i", "<C-l>", "<Right>")
 remap("i", "<leader>;", "<ESC>A;")
+remap("i", "jk", "<ESC>")
+
+-- Ajustar rolagem
+remap("n", "<C-d>", "<C-d>zz")
+remap("n", "<C-u>", "<C-u>zz")
+remap("n", "<C-j>", "<cmd>cprev<CR>zz")
+remap("n", "<C-k>", "<cmd>cnext<CR>zz")
+
+-- Melhor manipulação de tabs
+remap("n", "<leader><TAB>", ":tabnext<CR>")
+remap("n", "<leader><TAB>n", ":tabnew<CR>")
+remap("n", "<S-TAB>", ":tabprevious<CR>")
+
+-- Git atalhos
+remap("n", "<leader>ga", ":Gwrite<CR>")
+remap("n", "<leader>gb", ":Git blame<CR>")
+remap("n", "<leader>gc", ":Git commit --verbose<CR>")
+remap("n", "<leader>gd", ":Gvdiffsplit<CR>")
+remap("n", "<leader>gll", ":Git pull<CR>")
+remap("n", "<leader>gr", ":GRemove<CR>")
+remap("n", "<leader>gs", ":Git<CR>")
+remap("n", "<leader>gsh", ":Git push<CR>")
+
+-- Outros atalhos úteis
+remap("n", "J", "mzJ`z")
+remap("n", "N", "Nzzzv")
+remap("n", "n", "nzzzv")
+remap("n", "Q", "<nop>")
+remap("n", "<C-l>", ":nohl<CR>")
+remap("n", "<leader>e", "<cmd>Explore<CR>")
+remap("n", "<leader>F", vim.lsp.buf.format)
+remap("n", "<leader>c", ":Commentary<CR>")
+remap("n", "<leader>n", "<cmd> set nu! <CR>")
+remap("n", "<leader>rn", "<cmd> set rnu! <CR>")
+remap("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+remap("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 remap("n", "<leader>;", "<ESC>A;<ESC>")
 
-vim.keymap.set("i", "<C-b>", "<ESC>^i")
-vim.keymap.set("i", "<C-c>", "<Esc>")
-vim.keymap.set("i", "<C-e>", "<End>")
-vim.keymap.set("i", "<C-h>", "<Left>")
-vim.keymap.set("i", "<C-j>", "<Down>")
-vim.keymap.set("i", "<C-k>", "<Up>")
-vim.keymap.set("i", "<C-l>", "<Right>")
-vim.keymap.set("i", "<leader>;", "<ESC>A;")
-vim.keymap.set("i", "jk", "<ESC>") -- Press jk fast to enter
-vim.keymap.set("n", "<A-j>", ":move .+1<CR>==")              -- Move text up
-vim.keymap.set("n", "<A-k>", ":move .-2<CR>==")              -- Move text down
-vim.keymap.set("n", "<C-Down>", ":resize +2<CR>")
-vim.keymap.set("n", "<C-Left>", ":vertical resize -2<CR>")
-vim.keymap.set("n", "<C-Right>", ":vertical resize +2<CR>")
-vim.keymap.set("n", "<C-Up>", ":resize -2<CR>")
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
-vim.keymap.set("n", "<C-h>", "<C-w>h")
-vim.keymap.set("n", "<C-j>", "<C-w>j")
-vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")     --???
-vim.keymap.set("n", "<C-k>", "<C-w>k")
-vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")     --???
-vim.keymap.set("n", "<C-l>", ":nohl<CR>")
-vim.keymap.set("n", "<C-l>", "<C-w>l")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
-vim.keymap.set("n", "<Leader>ga", ":Gwrite<CR>")
-vim.keymap.set("n", "<Leader>gb", ":Git blame<CR>")
-vim.keymap.set("n", "<Leader>gc", ":Git commit --verbose<CR>")
-vim.keymap.set("n", "<Leader>gd", ":Gvdiffsplit<CR>")
-vim.keymap.set("n", "<Leader>gll", ":Git pull<CR>")
-vim.keymap.set("n", "<Leader>gr", ":GRemove<CR>")
-vim.keymap.set("n", "<Leader>gs", ":Git<CR>")
-vim.keymap.set("n", "<Leader>gsh", ":Git push<CR>")
-vim.keymap.set("n", "<S-TAB>", ":tabprevious<CR>") -- move tab previous
-vim.keymap.set("n", "<S-h>", ":bprevious<CR>")       -- Navigate previous buffers
-vim.keymap.set("n", "<S-l>", ":bnext<CR>")           -- Navigate next buffers
-vim.keymap.set("n", "<leade>gx", " <Plug>NetrwBrowseX") -- open link in browser
-vim.keymap.set("n", "<leader>;", "<ESC>A;<ESC>")
-vim.keymap.set("n", "<leader><TAB>", ":tabnext<CR>") -- move tab next
-vim.keymap.set("n", "<leader><TAB>n", ":tabnew<CR>") -- move tab next
-vim.keymap.set("n", "<leader>F", vim.lsp.buf.format)
-vim.keymap.set("n", "<leader>Y", '"+Y')
-vim.keymap.set("n", "<leader>Y", 'gg"+yG')
-vim.keymap.set("n", "<leader>Y", [["+Y]])
-vim.keymap.set("n", "<leader>c", ":Commentary<CR>")
-vim.keymap.set("n", "<leader>e", "<cmd>Explore<CR>")
-vim.keymap.set("n", "<leader>f", "<cmd>Neoformat<cr>")
-vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz") --???
-vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz") --???
-vim.keymap.set("n", "<leader>n", "<cmd> set nu! <CR>")
-vim.keymap.set("n", "<leader>p", '"+p')
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)                -- open file explorer
-vim.keymap.set("n", "<leader>rn", "<cmd> set rnu! <CR>")
-vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
-vim.keymap.set("n", "<leader>sc", ":CloseSession<CR>")
-vim.keymap.set("n", "<leader>sd", ":DeleteSession<CR>")
-vim.keymap.set("n", "<leader>so", ":OpenSession<Space>")
-vim.keymap.set("n", "<leader>ss", ":SaveSession<Space>")
-vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
-vim.keymap.set("n", "J", "mzJ`z")
-vim.keymap.set("n", "N", "Nzzzv")
-vim.keymap.set("n", "Q", "<nop>")
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("v", "<", "<gv")            -- Stay in indent mode
-vim.keymap.set("v", ">", ">gv")            -- Stay in indent mode
-vim.keymap.set("v", "J", ":move .+1<CR>==") -- move 1 line up
-vim.keymap.set("v", "K", ":move .-2<CR>==")  -- move 1 line down
-vim.keymap.set("v", "p", '"_dP')           -- Replace a word with yanked text
-vim.keymap.set("x", "<leader>p", [["_dP]]) -- reatest remap ever
-vim.keymap.set({ "n", "o" }, "<leader>P", '"+P')
-vim.keymap.set({ "n", "o" }, "<leader>y", '"+y')
-vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
-vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
-vim.keymap.set({ "v", "x" }, "<A-j>", ":move '>+1<CR>gv=gv") -- move line up
-vim.keymap.set({ "v", "x" }, "<A-k>", ":move '<-2<CR>gv=gv") -- move line down
+-- Sessões
+remap("n", "<leader>sc", ":CloseSession<CR>")
+remap("n", "<leader>sd", ":DeleteSession<CR>")
+remap("n", "<leader>so", ":OpenSession<Space>")
+remap("n", "<leader>ss", ":SaveSession<Space>")
 
--- "(\d{2})/(\\d{2})/(\\d{4}) => $3-$2-$1"
+-- Operações de movimentação em bloco visual
+remap("v", "J", ":move .+1<CR>==")
+remap("v", "K", ":move .-2<CR>==")
+remap("x", "<leader>p", [["_dP]])
